@@ -6,6 +6,8 @@ import android.widget.TextView;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 
+import java.net.URLEncoder;
+
 /**
  * Created by 60213 on 2017/5/7.
  */
@@ -21,27 +23,41 @@ public class AMapThread extends Thread {
 
     private int time_interval = 1;
     private TextView count_down;
-    private int count = 3;
-    private int count_init = 3;
+    private Integer count = 10;
+
+    private TextView info;
+    private TextView msg;
+
+    private int userid;
 
     public void setup(Handler handler,AMapLocationClient client, TextView la, TextView lo,
-                      int time_interval,TextView count_down,int count_init){
+                      int time_interval,TextView count_down,
+                      TextView info,TextView msg,
+                      int userid){
         this.handler = handler;
         this.mLocationClient = client;
         this.text_latitude = la;
         this.text_longitude = lo;
         this.time_interval = time_interval;
         this.count_down = count_down;
-        this.count_init = count_init;
-        this.count = this.count_init;
+        this.count = this.time_interval;
+        this.info = info;
+        this.msg = msg;
+        this.userid = userid;
     }
 
-    private boolean running = true;
+    private Boolean running = true;
 
     public void stop_thread(){
-        running = false;
+        synchronized (count){
+            count = -1;
+        }
+        synchronized (running) {
+            running = false;
+        }
     }
 
+    private String ret;
     @Override
     public void run(){
         while( running ){
@@ -51,6 +67,11 @@ public class AMapThread extends Thread {
                 if(location.getErrorCode() == 0){
                     final double latitude = location.getLatitude();
                     final double longitude = location.getLongitude();
+                    final StringBuffer location_str = new StringBuffer();
+                    location_str.append( location.getCountry() );
+                    location_str.append( location.getProvince() );
+                    location_str.append( location.getCity() );
+                    location_str.append( location.getStreet() );
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -60,8 +81,40 @@ public class AMapThread extends Thread {
                             synchronized (text_latitude){
                                 text_latitude.setText( Double.toString(latitude) );
                             }
+                            synchronized (info){
+                                info.setText(location_str);
+                            }
                         }
                     });
+                    try {
+                        ret = Util_http.sendPost(
+                                "http://niugenen.6655.la:60000/PersonalTrack/PointTrackServlet",
+                                        "test=True&userid=" + userid +
+                                        "&point={'latitude':" + latitude +
+                                                ",'longitude':" + longitude +
+                                        ",'location':'" + URLEncoder.encode( location_str.toString(),"utf-8") +
+                                        "'}&timestramp=" + Long.toString(System.currentTimeMillis()));
+                        //System.out.println("[Http reponse] " + ret);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                synchronized (msg) {
+                                    msg.setText(ret);
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        //System.out.println("Fail to send http message.");
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                synchronized (msg) {
+                                    msg.setText("Fail to send http message.");
+                                }
+                            }
+                        });
+                        e.printStackTrace();
+                    }
                 }
                 else{//failed
                     handler.post(new Runnable() {
@@ -76,7 +129,8 @@ public class AMapThread extends Thread {
                         }
                     });
                 }
-
+                //count down with time_interval
+                count = time_interval;
                 while(count >= 0) {
                     handler.post(new Runnable() {
                         @Override
@@ -87,8 +141,15 @@ public class AMapThread extends Thread {
                     Thread.sleep(1000);
                     count--;
                 }
-                count = count_init;
             }catch(Exception e){
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        synchronized (msg) {
+                            msg.setText("Exception in amap thread.");
+                        }
+                    }
+                });
                 e.printStackTrace();
             }
         }

@@ -2,6 +2,9 @@ package com.example.a60213.getyourlocation;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Button;
 import android.location.LocationManager;
@@ -30,77 +34,115 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (bgthread != null)
-            bgthread.stop_running();
+        //if (bgthread != null)
+        //  bgthread.stop_running();
         if(amapthread != null)
             amapthread.stop_thread();
         //do something
     }
 
-    private LocationThread bgthread;
+    //private LocationThread bgthread;
     private AMapThread amapthread;
 
     private String str1 = "asd";
     private String str2 = "qwe";
 
-    private LocationManager locationManager;
-    private int count = 3;
+   // private LocationManager locationManager;
+    //private int count = 3;
+    //private int count_fail = 1;
+    //private MyLocationListener my_location_listener;
 
-    private int count_fail = 1;
+    public void onStopGPSClick(View v){
+        try{
+            if(amapthread != null){
+                amapthread.stop_thread();
+                amapthread = null;
+            }
 
-    private MyLocationListener my_location_listener;
+            button_start.setClickable(true);
+            button_start.setTextColor( getResources().getColor(R.color.white) );
+            button_stop.setEnabled(false);
+            button_stop.setTextColor( getResources().getColor(R.color.lightgray) );
+            input_interval.setEnabled(true);
+            input_userid.setEnabled(true);
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (text_2_msg){
+                        text_2_msg.setText("GPS stop.");
+                    }
+                }
+            });
+        }catch (Exception e){
+            synchronized (text_2_msg){
+                text_2_msg.setText("exception in stop");
+            }
+            e.printStackTrace();
+        }
+    }
+
+    private int userid;
+    private int interval;
 
     public void onStartGPSClick(View v) {
         try {
-            //failed to use google location API because I am in China
-            //bgthread = new LocationThread();
-            //bgthread.setup(handler,count_down,edittext_latitude,edittext_longitude,locationManager);
-            //bgthread.start();
+            String userid_txt = input_userid.getText().toString();
+            if(userid_txt == null || userid_txt == ""){
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        synchronized (text_2_msg){
+                            text_2_msg.setText("Please enter user id");
+                        }
+                    }
+                });
+                return;
+            }
+            userid = Integer.parseInt( userid_txt );
+
+            String interval_txt = input_interval.getText().toString();
+            if(interval_txt == null || interval_txt == ""){
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        synchronized (text_2_msg){
+                            text_2_msg.setText("No interval entered. Default is 10");
+                        }
+                    }
+                });
+                interval = 10;
+            }
+            else{
+                interval = Integer.parseInt( interval_txt );
+            }
 
             amapthread = new AMapThread();
             amapthread.setup(handler,mLocationClient,
                     edittext_latitude,edittext_longitude,
-                    3,count_down,3);
+                    interval,count_down,
+                    text_2_info,text_2_msg,
+                    userid);
             amapthread.start();
 
-            //new Thread(new Runnable() {
-            //    @Override
-            //    public void run() {
-            /*        try {
-                        my_location_listener = new MyLocationListener();
-                        my_location_listener.setup(
-                            handler,edittext_latitude,edittext_longitude
-                        );
-                        final Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        while(location == null) {
-                            locationManager.requestLocationUpdates(
-                                    LocationManager.GPS_PROVIDER,
-                                    60000,
-                                    10,
-                                    my_location_listener
-                            );
-                        }
-
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                synchronized (edittext_latitude){
-                                    edittext_latitude.setText( Double.toString(location.getLatitude()) );
-                                }
-                                synchronized (edittext_longitude){
-                                    edittext_longitude.setText( Double.toString(location.getLongitude()) );
-                                }
-                            }
-                        });
-
-                    }catch(SecurityException e){
-                        e.printStackTrace();
+            button_start.setClickable(false);
+            button_start.setTextColor( getResources().getColor(R.color.lightgray) );
+            button_stop.setEnabled(true);
+            button_stop.setTextColor( getResources().getColor(R.color.white) );
+            input_interval.setEnabled(false);
+            input_userid.setEnabled(false);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (text_2_msg){
+                        text_2_msg.setText("GPS start.");
                     }
-            //    }
-            //}).start();;
-*/
-            ((Button)findViewById(R.id.button_2_start_gps)).setClickable(false);
+                }
+            });
         }catch(Exception e){
+            synchronized (text_2_msg){
+                text_2_msg.setText("exception in start");
+            }
             e.printStackTrace();
         }
     }
@@ -109,7 +151,15 @@ public class Main2Activity extends AppCompatActivity {
     private TextView edittext_longitude;
     private Handler handler;
 
+    private EditText input_userid;
+    private EditText input_interval;
+
     private TextView count_down;
+    private TextView text_2_info;
+    private TextView text_2_msg;
+
+    private Button button_start;
+    private Button button_stop;
 
     //声明AMapLocationClient类对象
     public AMapLocationClient mLocationClient = null;
@@ -125,7 +175,15 @@ public class Main2Activity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        input_userid = (EditText)findViewById(R.id.edittext_2_userid);
+        input_interval = (EditText)findViewById(R.id.edittext_2_interval);
+
+        button_start = (Button)findViewById(R.id.button_2_start_gps);
+        button_stop = (Button)findViewById(R.id.button_2_stop_gps);
+        button_start.setClickable(true);
+        button_start.setTextColor( getResources().getColor(R.color.white) );
+        button_stop.setEnabled(false);
+        button_stop.setTextColor( getResources().getColor(R.color.lightgray) );
 
         handler = new Handler();
 
@@ -133,47 +191,17 @@ public class Main2Activity extends AppCompatActivity {
         edittext_longitude = (TextView)findViewById(R.id.edittext_2_longitude);
 
         count_down = (TextView)findViewById(R.id.text_2_count_down);
+        text_2_info = (TextView)findViewById(R.id.text_2_info);
+        text_2_msg = (TextView)findViewById(R.id.text_2_msg);
 
         //初始化定位
         mLocationClient = new AMapLocationClient(getApplicationContext());
         /*mLocationListener = new AMapLocationListener() {
             @Override
-            public void onLocationChanged(AMapLocation aMapLocation) {
-                if(aMapLocation != null){
-                    if(aMapLocation.getErrorCode() == 0){//success
-                        final double latitude = aMapLocation.getLatitude();
-                        final double longitude = aMapLocation.getLongitude();
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                synchronized (edittext_longitude){
-                                    edittext_longitude.setText(Double.toString(longitude));
-                                }
-                                synchronized (edittext_latitude){
-                                    edittext_latitude.setText(Double.toString(longitude));
-                                }
-                            }
-                        });
-                    }
-                    else{//fail
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                synchronized (edittext_longitude){
-                                    edittext_longitude.setText("failed to get by amp");
-                                }
-                                synchronized (edittext_latitude){
-                                    edittext_latitude.setText("failed to get by amp");
-                                }
-                            }
-                        });
-                    }
-                }
-            }
+            public void onLocationChanged(AMapLocation aMapLocation) { }
         };*/
         //设置定位回调监听
         //mLocationClient.setLocationListener(mLocationListener);
-
 
         //初始化AMapLocationClientOption对象
         mLocationOption = new AMapLocationClientOption();
@@ -187,12 +215,12 @@ public class Main2Activity extends AppCompatActivity {
 
         //获取一次定位结果：
         //该方法默认为false。
-        mLocationOption.setOnceLocation(true);
+        //mLocationOption.setOnceLocation(true);
         //获取最近3s内精度最高的一次定位结果：
         //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
-        mLocationOption.setOnceLocationLatest(true);
+        //mLocationOption.setOnceLocationLatest(true);
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
-        //mLocationOption.setInterval(1000);
+        mLocationOption.setInterval(5000);
         //设置是否返回地址信息（默认返回地址信息）
         mLocationOption.setNeedAddress(true);
         //设置是否强制刷新WIFI，默认为true，强制刷新。
@@ -209,14 +237,6 @@ public class Main2Activity extends AppCompatActivity {
         //启动定位
         mLocationClient.startLocation();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
 }
