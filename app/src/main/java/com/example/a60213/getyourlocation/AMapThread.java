@@ -1,12 +1,24 @@
 package com.example.a60213.getyourlocation;
 
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Handler;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
+import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.CameraUpdateFactory;
+import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.Marker;
+import com.amap.api.maps2d.model.MarkerOptions;
 
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.ArrayList;
+
+import com.amap.api.maps2d.model.PolylineOptions;
+import com.amap.api.maps2d.model.Polyline;
 
 /**
  * Created by 60213 on 2017/5/7.
@@ -57,7 +69,37 @@ public class AMapThread extends Thread {
         }
     }
 
+    private AMap aMap = null;
+    public void onPathTrack(double latitude, double longitude){
+        if(aMap != null && last_latitude != -1){
+            final LatLng latLng = new LatLng(latitude,longitude);
+            //Marker marker = aMap.addMarker(new MarkerOptions().position(latLng).title("position").snippet("DefaultMarker"));
+            //aMap.moveCamera(CameraUpdateFactory.changeLatLng(latLng) );
+            final List<LatLng> latLngs = new ArrayList<LatLng>();
+            latLngs.add(new LatLng(last_latitude,last_longitude));
+            latLngs.add( latLng );
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Polyline polyline = aMap.addPolyline(new PolylineOptions().
+                            addAll(latLngs).width(2).color( Color.argb(255, 1, 1, 1) ));
+                    aMap.moveCamera( CameraUpdateFactory.changeLatLng( latLng ) );
+                }
+            });
+        }
+    }
+    public void start_path_track(AMap aMap){
+        this.aMap = aMap;
+    }
+    public void stop_path_track(){
+        aMap = null;
+    }
+
     private String ret;
+    private double last_latitude = -1;
+    private double last_longitude = -1;
+    private double latitude;
+    private double longitude;
     @Override
     public void run(){
         while( running ){
@@ -65,8 +107,8 @@ public class AMapThread extends Thread {
                 AMapLocation location = mLocationClient.getLastKnownLocation();
 
                 if(location.getErrorCode() == 0){
-                    final double latitude = location.getLatitude();
-                    final double longitude = location.getLongitude();
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
                     final StringBuffer location_str = new StringBuffer();
                     location_str.append( location.getCountry() );
                     location_str.append( location.getProvince() );
@@ -82,7 +124,7 @@ public class AMapThread extends Thread {
                                 text_latitude.setText( Double.toString(latitude) );
                             }
                             synchronized (info){
-                                info.setText(location_str);
+                                    info.setText(location_str);
                             }
                         }
                     });
@@ -94,7 +136,8 @@ public class AMapThread extends Thread {
                                                 ",'longitude':" + longitude +
                                         ",'location':'" + URLEncoder.encode( location_str.toString(),"utf-8") +
                                         "'}&timestramp=" + Long.toString(System.currentTimeMillis()));
-                        //System.out.println("[Http reponse] " + ret);
+                        //path track on amap
+                        onPathTrack(latitude,longitude);
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -141,6 +184,8 @@ public class AMapThread extends Thread {
                     Thread.sleep(1000);
                     count--;
                 }
+                last_latitude = latitude;
+                last_latitude = longitude;
             }catch(Exception e){
                 handler.post(new Runnable() {
                     @Override

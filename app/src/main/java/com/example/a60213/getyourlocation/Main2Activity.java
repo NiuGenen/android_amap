@@ -1,6 +1,7 @@
 package com.example.a60213.getyourlocation;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -23,13 +24,29 @@ import android.location.LocationManager;
 
 import com.amap.api.location.*;
 import com.amap.api.location.AMapLocationClientOption.AMapLocationMode;
-import com.amap.api.fence.*;
+
+import com.amap.api.maps2d.*;
 
 import org.w3c.dom.Text;
 
 import java.security.Permission;
 
 public class Main2Activity extends AppCompatActivity {
+
+    public void onShowPathClick(View v){
+        try{
+            Intent intent = new Intent(Main2Activity.this, Main4Activity.class);
+            synchronized (edittext_latitude) {
+                intent.putExtra("latitude", Double.parseDouble(edittext_latitude.getText().toString()));
+            }
+            synchronized (edittext_longitude) {
+                intent.putExtra("longitude", Double.parseDouble(edittext_longitude.getText().toString()));
+            }
+            startActivity(intent);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onDestroy() {
@@ -42,7 +59,10 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     //private LocationThread bgthread;
-    private AMapThread amapthread;
+    private static AMapThread amapthread;
+    public static AMapThread getAmapThread(){
+        return amapthread;
+    }
 
     private String str1 = "asd";
     private String str2 = "qwe";
@@ -51,6 +71,21 @@ public class Main2Activity extends AppCompatActivity {
     //private int count = 3;
     //private int count_fail = 1;
     //private MyLocationListener my_location_listener;
+
+    public void onShowAmapClick(View v){
+        try{
+            Intent intent = new Intent(Main2Activity.this, Main3Activity.class);
+            synchronized (edittext_latitude) {
+                intent.putExtra("latitude", Double.parseDouble(edittext_latitude.getText().toString()));
+            }
+            synchronized (edittext_longitude) {
+                intent.putExtra("longitude", Double.parseDouble(edittext_longitude.getText().toString()));
+            }
+            startActivity(intent);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
     public void onStopGPSClick(View v){
         try{
@@ -66,14 +101,13 @@ public class Main2Activity extends AppCompatActivity {
             input_interval.setEnabled(true);
             input_userid.setEnabled(true);
 
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (text_2_msg){
-                        text_2_msg.setText("GPS stop.");
-                    }
-                }
-            });
+            button_show_in_amap.setVisibility(View.INVISIBLE);
+
+            synchronized (text_2_msg){
+                text_2_msg.setText("GPS stop.");
+            }
+
+            button_show_path.setVisibility(View.INVISIBLE);
         }catch (Exception e){
             synchronized (text_2_msg){
                 text_2_msg.setText("exception in stop");
@@ -131,14 +165,16 @@ public class Main2Activity extends AppCompatActivity {
             button_stop.setTextColor( getResources().getColor(R.color.white) );
             input_interval.setEnabled(false);
             input_userid.setEnabled(false);
-            handler.post(new Runnable() {
+            button_show_in_amap.setVisibility(View.VISIBLE);
+            synchronized (text_2_msg){
+                text_2_msg.setText("GPS start.");
+            }
+            handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    synchronized (text_2_msg){
-                        text_2_msg.setText("GPS start.");
-                    }
+                    button_show_path.setVisibility(View.VISIBLE);
                 }
-            });
+            },interval * 1000 + 2000 );
         }catch(Exception e){
             synchronized (text_2_msg){
                 text_2_msg.setText("exception in start");
@@ -160,6 +196,8 @@ public class Main2Activity extends AppCompatActivity {
 
     private Button button_start;
     private Button button_stop;
+    private Button button_show_in_amap;
+    private Button button_show_path;
 
     //声明AMapLocationClient类对象
     public AMapLocationClient mLocationClient = null;
@@ -175,24 +213,30 @@ public class Main2Activity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        input_userid = (EditText)findViewById(R.id.edittext_2_userid);
-        input_interval = (EditText)findViewById(R.id.edittext_2_interval);
+        input_userid = (EditText) findViewById(R.id.edittext_2_userid);
+        input_interval = (EditText) findViewById(R.id.edittext_2_interval);
 
-        button_start = (Button)findViewById(R.id.button_2_start_gps);
-        button_stop = (Button)findViewById(R.id.button_2_stop_gps);
+        button_start = (Button) findViewById(R.id.button_2_start_gps);
+        button_stop = (Button) findViewById(R.id.button_2_stop_gps);
         button_start.setClickable(true);
-        button_start.setTextColor( getResources().getColor(R.color.white) );
+        button_start.setTextColor(getResources().getColor(R.color.white));
         button_stop.setEnabled(false);
-        button_stop.setTextColor( getResources().getColor(R.color.lightgray) );
+        button_stop.setTextColor(getResources().getColor(R.color.lightgray));
+
+        button_show_in_amap = (Button) findViewById(R.id.button_2_show_in_amap);
+        button_show_in_amap.setVisibility(View.INVISIBLE);
+
+        button_show_path = (Button)findViewById(R.id.button_2_show_path);
+        button_show_path.setVisibility(View.INVISIBLE);
 
         handler = new Handler();
 
-        edittext_latitude = (TextView)findViewById(R.id.edittext_2_latitude);
-        edittext_longitude = (TextView)findViewById(R.id.edittext_2_longitude);
+        edittext_latitude = (TextView) findViewById(R.id.edittext_2_latitude);
+        edittext_longitude = (TextView) findViewById(R.id.edittext_2_longitude);
 
-        count_down = (TextView)findViewById(R.id.text_2_count_down);
-        text_2_info = (TextView)findViewById(R.id.text_2_info);
-        text_2_msg = (TextView)findViewById(R.id.text_2_msg);
+        count_down = (TextView) findViewById(R.id.text_2_count_down);
+        text_2_info = (TextView) findViewById(R.id.text_2_info);
+        text_2_msg = (TextView) findViewById(R.id.text_2_msg);
 
         //初始化定位
         mLocationClient = new AMapLocationClient(getApplicationContext());
@@ -220,7 +264,7 @@ public class Main2Activity extends AppCompatActivity {
         //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
         //mLocationOption.setOnceLocationLatest(true);
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
-        mLocationOption.setInterval(5000);
+        mLocationOption.setInterval(2000);
         //设置是否返回地址信息（默认返回地址信息）
         mLocationOption.setNeedAddress(true);
         //设置是否强制刷新WIFI，默认为true，强制刷新。
@@ -238,5 +282,4 @@ public class Main2Activity extends AppCompatActivity {
         mLocationClient.startLocation();
 
     }
-
 }
