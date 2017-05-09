@@ -14,7 +14,9 @@ import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
 
+import android.os.Handler;
 import android.content.Intent;
+
 public class Main4Activity extends AppCompatActivity {
 
     private MapView mMapView;
@@ -41,11 +43,11 @@ public class Main4Activity extends AppCompatActivity {
 
         LatLng latLng = new LatLng(latitude,longitude);
         final Marker marker = aMap.addMarker(new MarkerOptions().position(latLng).title("position").snippet("DefaultMarker"));
-        aMap.moveCamera(CameraUpdateFactory.changeLatLng(latLng) );
+        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
 
         //write path
         AMapThread aMapThread = Main2Activity.getAmapThread();
-        aMapThread.start_path_track( aMap );
+        aMapThread.start_path_track( new Handler(), aMap );
     }
 
     @Override

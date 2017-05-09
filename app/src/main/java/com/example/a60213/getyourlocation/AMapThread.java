@@ -70,6 +70,7 @@ public class AMapThread extends Thread {
     }
 
     private AMap aMap = null;
+    private Handler aMapHandler = null;
     public void onPathTrack(double latitude, double longitude){
         if(aMap != null && last_latitude != -1){
             final LatLng latLng = new LatLng(latitude,longitude);
@@ -78,20 +79,28 @@ public class AMapThread extends Thread {
             final List<LatLng> latLngs = new ArrayList<LatLng>();
             latLngs.add(new LatLng(last_latitude,last_longitude));
             latLngs.add( latLng );
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Polyline polyline = aMap.addPolyline(new PolylineOptions().
-                            addAll(latLngs).width(2).color( Color.argb(255, 1, 1, 1) ));
-                    aMap.moveCamera( CameraUpdateFactory.changeLatLng( latLng ) );
-                }
-            });
+            System.out.println("[Line][s]"+last_latitude+" "+last_longitude+"[e]"+latitude +" "+longitude);
+            if(last_latitude != latitude || last_longitude != longitude) {  //make sense
+                aMapHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Polyline polyline = aMap.addPolyline(new PolylineOptions().
+                                addAll(latLngs).width(1).color(Color.argb(255, 1, 1, 1)));
+                        aMap.moveCamera(CameraUpdateFactory.changeLatLng(latLng));
+                    }
+                });
+            }
+            if(aMap.getCameraPosition() != null)
+                System.out.println("[zoom]" + aMap.getCameraPosition().zoom);
+            System.out.println("[zoom][min]" + aMap.getMinZoomLevel() +"[max]"+aMap.getMaxZoomLevel());
         }
     }
-    public void start_path_track(AMap aMap){
+    public void start_path_track(Handler handler,AMap aMap){
+        this.aMapHandler = handler;
         this.aMap = aMap;
     }
     public void stop_path_track(){
+        aMapHandler = null;
         aMap = null;
     }
 
@@ -185,7 +194,7 @@ public class AMapThread extends Thread {
                     count--;
                 }
                 last_latitude = latitude;
-                last_latitude = longitude;
+                last_longitude = longitude;
             }catch(Exception e){
                 handler.post(new Runnable() {
                     @Override
