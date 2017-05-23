@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity{
     public void onSwitchButtonClick(View v){
         Intent intent = new Intent(MainActivity.this, Main2Activity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.leftin, R.anim.leftout);
         //overridePendingTransition(R.anim.mainfadein,);
     }
 

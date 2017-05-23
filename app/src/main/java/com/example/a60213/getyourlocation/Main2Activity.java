@@ -49,6 +49,12 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     @Override
+    public void finish(){
+        super.finish();
+        overridePendingTransition(R.anim.leftin, R.anim.leftout);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         //if (bgthread != null)

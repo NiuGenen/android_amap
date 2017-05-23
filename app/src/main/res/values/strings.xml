@@ -4,4 +4,5 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_main3">Main3Activity</string>
     <string name="title_activity_main4">Main4Activity</string>
+    <string name="server_point_track">http://niugenen.6655.la:60000/servlet_server_for_android/PointTrackServlet</string>
 </resources>
