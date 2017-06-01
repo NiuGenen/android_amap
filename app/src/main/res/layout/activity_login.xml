@@ -7,9 +7,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="616dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:background="@color/white">
 
         <TextView
             android:layout_width="match_parent"
@@ -47,14 +48,25 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
+                android:background="@drawable/input_bg"
+                android:textCursorDrawable="@drawable/input_cursor"
                 android:text="username"
+                android:inputType="textImeMultiLine"
+                android:maxLines="1"
+                android:textColor="@color/lightskyblue"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="25dp"
                 android:id="@+id/login_username_input"/>
-            <View
-                android:layout_width="50dp"
-                android:layout_height="match_parent"/>
+            <Button
+                android:id="@+id/login_username_input_clean_button"
+                android:onClick="onUsernameClean"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="X"
+                android:textSize="13dp"
+                android:textColor="@color/white"
+                android:background="@drawable/circle_gray"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,13 +80,24 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
-                android:text="password"
+                android:text="passwd"
+                android:textCursorDrawable="@drawable/input_cursor"
+                android:background="@drawable/input_bg"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                android:textColor="@color/lightskyblue"
                 android:gravity="center"
                 android:textSize="25dp"
                 android:id="@+id/login_passwd_input"/>
-            <View
-                android:layout_width="50dp"
-                android:layout_height="match_parent"/>
+            <Button
+                android:id="@+id/login_passwd_input_clean_button"
+                android:onClick="onPasswdClean"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="X"
+                android:textSize="13dp"
+                android:textColor="@color/white"
+                android:background="@drawable/circle_gray"/>
         </LinearLayout>
         <View
             android:layout_width="wrap_content"
@@ -89,12 +112,12 @@
             <Button
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:text="comfirm"
+                android:text="Sign in"
                 android:textColor="@color/white"
-                android:background="@color/lightskyblue"
                 android:textSize="25dp"
-                android:id="@+id/login_comfirm_button"
-                android:onClick="onLoginClick"/>
+                android:background="@drawable/rectangle_lightskyblue"
+                android:onClick="onLoginClick"
+                android:id="@+id/login_signin_button"/>
             <View
                 android:layout_width="100dp"
                 android:layout_height="match_parent"/>
