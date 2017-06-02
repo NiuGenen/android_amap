@@ -1,13 +1,9 @@
 package com.example.a60213.getyourlocation;
 
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -18,17 +14,20 @@ import android.widget.EditText;
 public class LoginActivity extends AppCompatActivity {
 
     private Handler handler = new Handler();
-    private Button mButton;
+    private Button sign_in_Button;
+    private String username;
+    private String passwd;
     public void onLoginClick(View view){
-        String username = username_input.getText().toString();
-        String passwd = username_input.getText().toString();
-        mButton.setBackground( getResources().getDrawable(R.drawable.rectangle_lightblue) );
+        username = username_input.getText().toString();
+        passwd = username_input.getText().toString();
+        sign_in_Button.setBackground( getResources().getDrawable(R.drawable.rectangle_lightblue) );
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                boolean success = false;
+                boolean success = AppServer.getInstance().Login(username,passwd);
                 if(success){
                     Intent intent = new Intent(LoginActivity.this, FlowingDrawerActivity.class);
+                    //Intent intent = new Intent(LoginActivity.this, Main5Activity.class);
                     startActivity(intent);
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -38,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
                     }, 1000);
                 }
                 else {
-                    mButton.setBackground( getResources().getDrawable(R.drawable.rectangle_lightskyblue) );
+                    sign_in_Button.setBackground( getResources().getDrawable(R.drawable.rectangle_lightskyblue) );
                     username_input.startAnimation(username_anima);
                     passwd_input.startAnimation(passwd_anima);
                 }
@@ -60,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mButton = (Button)findViewById(R.id.login_signin_button);
+        sign_in_Button = (Button)findViewById(R.id.login_signin_button);
         username_input = (EditText)findViewById(R.id.login_username_input);
         username_input_clean = (Button)findViewById(R.id.login_username_input_clean_button);
         username_input_clean.setVisibility(View.INVISIBLE);

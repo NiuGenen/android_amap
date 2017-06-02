@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Util_http {
+
     public static String sendGet(String url, String param) {
         String result = "";
         BufferedReader in = null;

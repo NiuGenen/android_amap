@@ -44,7 +44,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/icon2"
+        android:icon="@drawable/icon3"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -86,7 +86,13 @@
             android:name=".LoginActivity"
             android:theme="@style/ColorTranslucentThemeNoActionBar">
         </activity>
-        <activity android:name=".FlowingDrawerActivity">
+        <activity android:name=".FlowingDrawerActivity"
+                  android:theme="@style/ColorTranslucentThemeNoActionBar">
+        </activity>
+        <activity
+            android:name=".Main5Activity"
+            android:label="@string/title_activity_main5"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 
