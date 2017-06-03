@@ -1,5 +1,6 @@
 package com.example.a60213.getyourlocation;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.amap.api.maps2d.MapView;
@@ -17,9 +19,26 @@ import android.app.FragmentTransaction;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 
-public class FlowingDrawerActivity extends AppCompatActivity {
+public class FlowingDrawerActivity extends AppCompatActivity implements DatePickerDialogFragment.DatePickerDialogImpl{
+
     private Handler handler = new Handler();
 
+    private DatePickerDialog.OnDateSetListener DatePickerDIalogListener;
+    @Override
+    public DatePickerDialog.OnDateSetListener getDatePickerDialogListener(){
+        if(DatePickerDIalogListener == null) {
+            DatePickerDIalogListener = new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                      int dayOfMonth) {
+                    map_date.setText(year + "-" + (monthOfYear+1) + "-" + dayOfMonth);
+                    map_date_button.setBackground( getResources().getDrawable(R.color.lightskyblue) );
+                    map_date_button.setTextColor( getResources().getColor(R.color.white) );
+                }
+            };
+        }
+        return DatePickerDIalogListener;
+    }
     private TextView map_date;
     private Button map_date_button;
     public void onMapDateChooseClick(View view){
@@ -29,21 +48,20 @@ public class FlowingDrawerActivity extends AppCompatActivity {
         if(map_date_button==null){
             map_date_button = (Button)findViewById(R.id.main_path_date_choose_button);
         }
-        handler.post(new Runnable() {
+        handler.post(new Runnable() {//show date picker dialog
             @Override
             public void run() {
                 map_date_button.setBackground( getResources().getDrawable(R.color.white) );
                 map_date_button.setTextColor( getResources().getColor(R.color.lightskyblue) );
-                //FragmentTransaction mFragTransaction = getFragmentManager().beginTransaction();
+                FragmentTransaction mFragTransaction = getFragmentManager().beginTransaction();
+                Fragment fragment =  getFragmentManager().findFragmentByTag("DatePickerDialog");
+                if(fragment != null){
+                    mFragTransaction.remove(fragment);
+                }
+                DatePickerDialogFragment datePickerDialogFragment = new DatePickerDialogFragment();
+                datePickerDialogFragment.show(mFragTransaction, "DatePickerDialog");
             }
         });
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                map_date_button.setBackground( getResources().getDrawable(R.color.lightskyblue) );
-                map_date_button.setTextColor( getResources().getColor(R.color.white) );
-            }
-        },1000);
     }
 
     public void onMainFriendClick(View view){

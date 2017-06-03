@@ -70,7 +70,8 @@
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="@color/lightskyblue"/>
+                android:background="@color/lightskyblue"
+                style="?android:attr/borderlessButtonStyle"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
@@ -122,16 +123,18 @@
                 android:layout_height="50dp"/>
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:src="@drawable/head"/>
+                    android:layout_height="80dp"
+                    android:src="@drawable/head_60"
+                    android:layout_centerInParent="true"/>
                 <ImageView
-                    android:paddingTop="4dp"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:src="@drawable/earth_128"/>
+                    android:layout_height="60dp"
+                    android:src="@drawable/earth_128"
+                    android:layout_centerInParent="true"/>
             </RelativeLayout>
             <View
                 android:layout_width="match_parent"
