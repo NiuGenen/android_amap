@@ -72,6 +72,8 @@ public class AppServer {
             info_eq.put("start",Long.toString(start));
             info_eq.put("end",Long.toString(end));
 
+            Log.d("AppServer.UserPath", info_eq.toString() );
+
             String res = Util_http.sendPost(UserPath_URL, info_eq.toString());
             JSONObject info_res = new JSONObject( res );
             JSONArray points_json = info_res.getJSONArray("points");
@@ -82,7 +84,7 @@ public class AppServer {
                 DumpPoint p = new DumpPoint();
                 p.setLatitude( point.getDouble("latitude") );
                 p.setLongitude( point.getDouble("longitude") );
-                p.setLocation( point.getString("location") );
+                p.setTime( point.getLong("time") );
                 ret.add( p );
             }
             return ret;

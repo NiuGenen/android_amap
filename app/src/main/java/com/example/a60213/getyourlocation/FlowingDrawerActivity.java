@@ -3,6 +3,7 @@ package com.example.a60213.getyourlocation;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -29,6 +30,8 @@ import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
+import com.amap.api.maps2d.model.Polyline;
+import com.amap.api.maps2d.model.PolylineOptions;
 import com.amap.api.maps2d.model.Text;
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
@@ -39,6 +42,9 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.widget.TimePicker;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class FlowingDrawerActivity extends AppCompatActivity
@@ -75,6 +81,7 @@ public class FlowingDrawerActivity extends AppCompatActivity
                     map_date.setText(year + "-" + (monthOfYear+1) + "-" + dayOfMonth);
                     map_date_button.setBackground( ContextCompat.getDrawable(getBaseContext(),R.color.lightskyblue) );
                     map_date_button.setTextColor( ContextCompat.getColor(getBaseContext(),R.color.white) );
+                    onMapShowTrace(year,monthOfYear,dayOfMonth);
                 }
             };
         }
@@ -104,8 +111,49 @@ public class FlowingDrawerActivity extends AppCompatActivity
             }
         });
     }
-    public void onMapShowTrace(){
-
+    private int y=0,m=0,d=0;
+    private double la = -1,lo = -1,lst_la = -1,lst_lo = -1;
+    public void onMapShowTrace(final int y,final int m,final int d){
+        if(this.y==y && this.m==m && this.d==d) return;
+        this.y=y;this.m=m;this.d=d;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Calendar time = Calendar.getInstance();
+                time.set(y,m,d);
+                Long start = time.getTimeInMillis();
+                time.set(y,m,d+1);
+                Long end = time.getTimeInMillis();
+                final List<DumpPoint> points = AppServer.getInstance().UserPath(start, end);
+                if(points != null) handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AMap aMap = mMapView.getMap();
+                        aMap.clear();
+                        LatLng latLng = null;
+                        for(DumpPoint p: points){
+                            if(lst_la == -1 && lst_la != la && lst_lo != lo){
+                                lst_la = p.getLatitude();
+                                lst_lo = p.getLongitude();
+                                continue;
+                            }
+                            la = p.getLatitude();
+                            lo = p.getLongitude();
+                            latLng = new LatLng(la,lo);
+                            List<LatLng> latLngs = new ArrayList<LatLng>();
+                            latLngs.add(new LatLng(lst_la,lst_lo));
+                            latLngs.add( latLng );
+                            Polyline polyline = aMap.addPolyline(new PolylineOptions().
+                                    addAll(latLngs).width(5).color(Color.argb(255, 1, 1, 1)));
+                            lst_la = la;
+                            lst_lo = lo;
+                        }
+                        if(latLng != null)
+                            aMap.moveCamera(CameraUpdateFactory.changeLatLng(latLng));
+                    }
+                });
+            }
+        }).start();
     }
 
     // friend circle view

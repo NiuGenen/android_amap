@@ -107,8 +107,8 @@ public class AmapTraceThread extends Thread {
         }
     }
 
-    private double last_latitude;
-    private double last_longitude;
+    private double last_latitude = -1;
+    private double last_longitude = -1;
     private AMap aMap = null;
     private Handler aMapHandler = null;
     private boolean setted = false;

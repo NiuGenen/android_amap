@@ -54,7 +54,7 @@
         <!-- amap key -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="no no no"/>
+            android:value="oh no there is no key"/>
         <!-- activity -->
         <activity
             android:name=".MainActivity"
