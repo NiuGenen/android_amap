@@ -328,6 +328,29 @@
                     android:layout_height="1dp"
                     android:background="@color/lightskyblue"/>
                 <Button
+                    android:id="@+id/main_realtime_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/setting_menu_realtime_title"
+                    android:onClick="onMainRealtimeClick"
+                    android:textColor="@color/lightskyblue"
+                    android:background="@color/white"
+                    android:textSize="25dp"
+                    style="?android:attr/borderlessButtonStyle"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightskyblue"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:background="@color/white"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightskyblue"/>
+                <Button
                     android:id="@+id/main_setting_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

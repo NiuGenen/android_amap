@@ -3,9 +3,12 @@ package com.example.a60213.getyourlocation;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -21,8 +24,8 @@ public class LoginActivity extends AppCompatActivity {
     private String passwd;
     public void onLoginClick(View view){
         username = username_input.getText().toString();
-        passwd = username_input.getText().toString();
-        sign_in_Button.setBackground( getResources().getDrawable(R.drawable.rectangle_lightblue) );
+        passwd = passwd_input.getText().toString();
+        sign_in_Button.setBackground( ContextCompat.getDrawable(getBaseContext(), R.drawable.rectangle_lightblue) );
         sign_in_Button.setClickable(false);
         boolean is_input_empty = false;
         if(username_input.getText().length()==0){
@@ -34,17 +37,22 @@ public class LoginActivity extends AppCompatActivity {
             is_input_empty = true;
         }
         if(is_input_empty){
-            sign_in_Button.setBackground( getResources().getDrawable(R.drawable.rectangle_lightskyblue) );
+            sign_in_Button.setBackground( ContextCompat.getDrawable(getBaseContext(), R.drawable.rectangle_lightskyblue) );
             sign_in_Button.setClickable(true);
             return;
         }
-        handler.postDelayed(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                boolean success = AppServer.getInstance().Login(username,passwd);
+                boolean success = AppServer.getInstance().Login(username, passwd);
                 if(success){
+                    SharedPreferences sp = getSharedPreferences("configure.ng",MODE_PRIVATE);
+                    SharedPreferences.Editor ed = sp.edit();
+                    ed.putString("default_username",username);
+                    ed.putString("default_passwd", passwd);
+                    ed.apply();
+
                     Intent intent = new Intent(LoginActivity.this, FlowingDrawerActivity.class);
-                    //Intent intent = new Intent(LoginActivity.this, Main5Activity.class);
                     startActivity(intent);
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -54,13 +62,19 @@ public class LoginActivity extends AppCompatActivity {
                     }, 1000);
                 }
                 else {
-                    sign_in_Button.setBackground( getResources().getDrawable(R.drawable.rectangle_lightskyblue) );
-                    sign_in_Button.setClickable(true);
-                    username_input.startAnimation(username_anima);
-                    passwd_input.startAnimation(passwd_anima);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            sign_in_Button.setBackground( ContextCompat.getDrawable(getBaseContext(), R.drawable.rectangle_lightskyblue) );
+                            sign_in_Button.setClickable(true);
+                            username_input.startAnimation(username_anima);
+                            passwd_input.startAnimation(passwd_anima);
+                        }
+                    });
+                    Log.w("Login.onLoginClick",username + " " + passwd);
                 }
             }
-        },1000);
+        }).start();
     }
 
     public void onRegisterClick(View view){
@@ -75,6 +89,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText username_input;
     private EditText passwd_input;
+    private String default_username = "username";
+    private String default_passwd = "passwd";
+    private String default_username_configure_key = "default_username";
+    private String default_passwd_configure_key = "default_passwd";
     private Button username_input_clean;
     public void onUsernameClean(View view){
         username_input.setText("");
@@ -88,9 +106,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sign_in_Button = (Button)findViewById(R.id.login_signin_button);
+
+        SharedPreferences sp = getSharedPreferences("configure.ng",MODE_PRIVATE);
+
         username_input = (EditText)findViewById(R.id.login_username_input);
+        default_username = sp.getString(default_username_configure_key, default_username);
+        username_input.setText(default_username );
         username_input_clean = (Button)findViewById(R.id.login_username_input_clean_button);
         username_input_clean.setVisibility(View.INVISIBLE);
+
         username_input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -102,9 +126,13 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
         passwd_input = (EditText)findViewById(R.id.login_passwd_input);
+        default_passwd = sp.getString(default_passwd_configure_key, default_passwd);
+        passwd_input.setText(default_passwd );
         passwd_input_clean = (Button)findViewById(R.id.login_passwd_input_clean_button);
         passwd_input_clean.setVisibility(View.INVISIBLE);
+
         passwd_input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -116,6 +144,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
         createAnimation();
     }
 
@@ -149,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
         username_anima.addAnimation( username_1 );
         username_anima.addAnimation( username_2 );
         username_anima.addAnimation( username_3 );
-        username_input.setAnimation( username_anima );
+        //username_input.setAnimation( username_anima );
 
         Animation passwd_1 = new TranslateAnimation(
                 passwd_x,passwd_x + anima_size,
@@ -169,6 +198,6 @@ public class LoginActivity extends AppCompatActivity {
         passwd_anima.addAnimation( passwd_1 );
         passwd_anima.addAnimation( passwd_2 );
         passwd_anima.addAnimation( passwd_3 );
-        passwd_input.setAnimation( passwd_anima );
+        //passwd_input.setAnimation( passwd_anima );
     }
 }

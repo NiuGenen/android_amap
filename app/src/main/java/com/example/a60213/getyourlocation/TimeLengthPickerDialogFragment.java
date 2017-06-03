@@ -12,8 +12,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.Calendar;
-
 /**
  * Created by 60213 on 2017/6/3.
  */
@@ -21,7 +19,6 @@ import java.util.Calendar;
 public class TimeLengthPickerDialogFragment extends DialogFragment {
 
     public interface TimeLengthPickerDialogImpl{
-        //TimePickerDialog.OnTimeSetListener getTimePickerDialogListener();
         void onTimeLengthPickerSet(int min,int sec);
     }
 
@@ -51,16 +48,4 @@ public class TimeLengthPickerDialogFragment extends DialogFragment {
 
         return view;
     }
-
-    /*@Override
-    public Dialog onCreateDialog(Bundle b){
-        Calendar now = Calendar.getInstance();
-        return new TimePickerDialog(
-                getActivity(),
-                ((TimeLengthPickerDialogImpl)getActivity()).getTimePickerDialogListener(),
-                now.get(Calendar.HOUR_OF_DAY),
-                now.get(Calendar.MINUTE),
-                true
-        );
-    }*/
 }

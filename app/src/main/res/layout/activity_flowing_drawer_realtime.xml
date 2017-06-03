@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="Trajectory"
             android:textColor="@color/white"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:gravity="center"
@@ -37,7 +37,6 @@
             android:layout_below="@+id/textView2"
             android:id="@+id/map_layout"
             android:background="@color/white">
-
             <com.amap.api.maps2d.MapView
                 android:id="@+id/map"
                 android:layout_width="match_parent"
@@ -46,7 +45,6 @@
                 android:layout_marginBottom="25dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"/>
-
         </FrameLayout>
 
         <LinearLayout
@@ -61,7 +59,7 @@
                 android:layout_height="5dp"
                 android:background="@color/white"/>
             <TextView
-                android:id="@+id/main_path_date_choose_text"
+                android:id="@+id/main_today_now_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
@@ -74,17 +72,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:background="@color/white"/>
-            <Button
-                android:id="@+id/main_path_date_choose_button"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="选择日期"
-                android:onClick="onMapDateChooseClick"
-                android:textColor="@color/white"
-                android:gravity="center"
-                android:textSize="30sp"
-                android:background="@color/lightskyblue"
-                style="?android:attr/borderlessButtonStyle"/>
+                android:layout_height="50dp"
+                android:weightSum="3"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/real_time_reset_button"
+                    android:layout_margin="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:text="Reset"
+                    android:onClick="onRealTimeReset"
+                    android:textColor="@color/lightskyblue"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:textStyle="normal"/>
+                <Button
+                    android:id="@+id/real_time_stop_button"
+                    android:layout_margin="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:text="Stop"
+                    android:onClick="onRealTimeStop"
+                    android:textColor="@color/lightskyblue"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:textStyle="normal"/>
+                <Button
+                    android:id="@+id/real_time_start_button"
+                    android:layout_margin="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:text="Start"
+                    android:onClick="onRealTimeStart"
+                    android:textColor="@color/lightskyblue"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:textStyle="normal"/>
+            </LinearLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
@@ -181,18 +213,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/lightskyblue"/>
-
                 <Button
                     android:id="@+id/main_path_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/setting_menu_map_title"
-                    android:textColor="@color/white"
-                    android:background="@color/lightskyblue"
+                    android:onClick="onMainMapClick"
+                    android:textColor="@color/lightskyblue"
+                    android:background="@color/white"
                     android:textSize="25sp"
                     style="?android:attr/borderlessButtonStyle"/>
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -211,9 +242,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/setting_menu_realtime_title"
-                    android:onClick="onMainRealtimeClick"
-                    android:textColor="@color/lightskyblue"
-                    android:background="@color/white"
+                    android:textColor="@color/white"
+                    android:background="@color/lightskyblue"
                     android:textSize="25sp"
                     style="?android:attr/borderlessButtonStyle"/>
                 <View

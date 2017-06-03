@@ -73,8 +73,7 @@ public class Util_http {
 
             conn.connect();
 
-            in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+            in = new BufferedReader( new InputStreamReader(conn.getInputStream()) );
 
             String line;
             while ((line = in.readLine()) != null) {
