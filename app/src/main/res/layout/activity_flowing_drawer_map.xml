@@ -29,18 +29,33 @@
             android:background="@color/lightskyblue"
             android:id="@+id/textView2"/>
 
-        <com.amap.api.maps2d.MapView
-            android:id="@+id/map"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="120dp"
+            android:layout_alignParentEnd="true"
             android:layout_below="@+id/textView2"
-            android:layout_alignParentStart="true"/>
+            android:id="@+id/map_layout"
+            android:background="@color/white">
+
+            <com.amap.api.maps2d.MapView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_below="@+id/textView2"
+                android:layout_alignParentStart="true"/>
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/map"
-            android:layout_alignParentEnd="true"
+            android:layout_marginTop="-120dp"
+            android:layout_below="@+id/map_layout"
             android:background="@color/lightskyblue"
             android:orientation="vertical">
             <View
@@ -104,47 +119,39 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/id_container_menu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:weightSum="1"
             android:background="@color/lightskyblue">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="43dp"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:background="@color/white"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="50dp"/>
             <RelativeLayout
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="43dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
+                android:layout_height="200dp"
+                android:id="@+id/menu_head_layout">
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
                     android:src="@drawable/head_60"
                     android:layout_centerInParent="true"/>
+
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:src="@drawable/earth_128"
-                    android:layout_centerInParent="true"/>
+                    android:layout_centerVertical="true"/>
             </RelativeLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_weight="0.11"/>
             <LinearLayout
+                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical">
+                android:background="@color/lightskyblue"
+                android:orientation="vertical"
+                android:id="@+id/menu_item_layout"
+                android:layout_below="@+id/menu_head_layout">
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="5dp"
@@ -158,7 +165,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="轨迹圈"
+                    android:text="@string/setting_menu_friend_title"
                     android:onClick="onMainFriendClick"
                     android:textColor="@color/lightskyblue"
                     android:background="@color/white"
@@ -181,7 +188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="个人轨迹"
+                    android:text="@string/setting_menu_map_title"
                     android:textColor="@color/white"
                     android:background="@color/lightskyblue"
                     android:textSize="25dp"
@@ -203,7 +210,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="设置"
+                    android:text="@string/setting_menu_more_title"
                     android:onClick="onMainSteeingClick"
                     android:textColor="@color/lightskyblue"
                     android:background="@color/white"
@@ -218,7 +225,7 @@
                     android:layout_height="5dp"
                     android:background="@color/white"/>
             </LinearLayout>
-        </LinearLayout>
+        </RelativeLayout>
 
     </com.mxn.soul.flowingdrawer_core.FlowingMenuLayout>
 

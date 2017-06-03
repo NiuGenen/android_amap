@@ -29,4 +29,8 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="setting_menu_friend_title">轨迹圈</string>
+    <string name="setting_menu_map_title">个人轨迹</string>
+    <string name="setting_menu_more_title">更多功能</string>
 </resources>

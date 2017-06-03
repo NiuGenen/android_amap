@@ -1,7 +1,12 @@
 <resources>
-
+    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:colorAccent">@color/lightskyblue</item>
+    </style>
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
+    </style>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="AppBaseTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -9,6 +14,9 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="elasticDrawerStyle" parent="AppBaseTheme">
+
+    </style>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -20,6 +28,7 @@
 
     <style name="ColorTranslucentThemeNoActionBar" parent="AppTheme.NoActionBar">
         <item name="android:statusBarColor">@color/lightskyblue</item>
+        <item name="elasticDrawerStyle">@color/white</item>
     </style>
 
     <style name="ColorTranslucentTheme" parent="AppTheme">

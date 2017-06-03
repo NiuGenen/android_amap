@@ -1,5 +1,7 @@
 package com.example.a60213.getyourlocation;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -12,8 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity {
-
     private Handler handler = new Handler();
+
     private Button sign_in_Button;
     private String username;
     private String passwd;
@@ -21,6 +23,21 @@ public class LoginActivity extends AppCompatActivity {
         username = username_input.getText().toString();
         passwd = username_input.getText().toString();
         sign_in_Button.setBackground( getResources().getDrawable(R.drawable.rectangle_lightblue) );
+        sign_in_Button.setClickable(false);
+        boolean is_input_empty = false;
+        if(username_input.getText().length()==0){
+            username_input.startAnimation(username_anima);
+            is_input_empty = true;
+        }
+        if(passwd_input.getText().length()==0){
+            passwd_input.startAnimation(passwd_anima);
+            is_input_empty = true;
+        }
+        if(is_input_empty){
+            sign_in_Button.setBackground( getResources().getDrawable(R.drawable.rectangle_lightskyblue) );
+            sign_in_Button.setClickable(true);
+            return;
+        }
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -38,11 +55,22 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else {
                     sign_in_Button.setBackground( getResources().getDrawable(R.drawable.rectangle_lightskyblue) );
+                    sign_in_Button.setClickable(true);
                     username_input.startAnimation(username_anima);
                     passwd_input.startAnimation(passwd_anima);
                 }
             }
         },1000);
+    }
+
+    public void onRegisterClick(View view){
+        FragmentTransaction mFragTransaction = getFragmentManager().beginTransaction();
+        Fragment fragment =  getFragmentManager().findFragmentByTag("registerDialog");
+        if(fragment!=null){
+            mFragTransaction.remove(fragment);
+        }
+        RegisterDialogFragment dialogFragment = new RegisterDialogFragment();
+        dialogFragment.show(mFragTransaction, "registerDialog");
     }
 
     private EditText username_input;

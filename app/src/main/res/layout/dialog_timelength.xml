@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lightskyblue"
+        android:layout_gravity="center"
+        android:text="Interval Time"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="normal"/>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="4"
+        android:id="@+id/interval_time_input_frame"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:background="#00000000"/>
+        <EditText
+            android:id="@+id/interval_time_input_min_text"
+            android:layout_gravity="center"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:textCursorDrawable="@drawable/input_cursor"
+            android:background="@drawable/input_bg"
+            android:inputType="number"
+            android:maxLines="1"
+            android:maxLength="2"
+            android:text="0"
+            android:textColor="@color/lightskyblue"
+            android:textSize="50sp"
+            android:gravity="center"
+            android:textStyle="normal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="分"
+            android:textColor="@color/lightskyblue"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textStyle="normal"/>
+        <EditText
+            android:id="@+id/interval_time_input_sec_text"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/input_bg"
+            android:textCursorDrawable="@drawable/input_cursor"
+            android:inputType="number"
+            android:maxLines="1"
+            android:maxLength="2"
+            android:text="5"
+            android:textColor="@color/lightskyblue"
+            android:textSize="50sp"
+            android:gravity="center"
+            android:textStyle="normal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="秒"
+            android:textColor="@color/lightskyblue"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textStyle="normal"/>
+        <View
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:background="#00000000"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reg_now_button_frame"
+        android:layout_below="@+id/interval_time_input_frame"
+        android:paddingBottom="10dp">
+        <Button
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Set Now"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:layout_gravity="center"
+            android:background="@drawable/rectangle_lightskyblue"
+            android:id="@+id/set_now_button"
+            />
+        </FrameLayout>
+
+</LinearLayout>
