@@ -120,9 +120,9 @@ public class FlowingDrawerActivity extends AppCompatActivity
             @Override
             public void run() {
                 Calendar time = Calendar.getInstance();
-                time.set(y,m,d);
+                time.set(y,m,d,0,0,0);//bug fixed 2017-06-10
                 Long start = time.getTimeInMillis();
-                time.set(y,m,d+1);
+                time.set(y,m,d+1,0,0,0);//bug fixed 2017-06-10
                 Long end = time.getTimeInMillis();
                 final List<DumpPoint> points = AppServer.getInstance().UserPath(start, end);
                 if(points != null) handler.post(new Runnable() {
