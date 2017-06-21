@@ -153,5 +153,9 @@ public class AmapTraceThread extends Thread {
     public void stop_path_track(){
         is_real_time_on = false;
     }
+    public void reset_path_track(){
+        last_latitude = -1;
+        last_longitude = -1;
+    }
 
 }

@@ -44,6 +44,7 @@ import android.widget.TimePicker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -183,6 +184,19 @@ public class FlowingDrawerActivity extends AppCompatActivity
         }
         setContentView( page_realtime_view ); // set view first, then findViewByID
         if(today_now_text == null) today_now_text = (TextView)findViewById(R.id.main_today_now_text);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Calendar today = Calendar.getInstance();
+                today.setTime( new Date() );
+                today_now_text.setText(String.format("%4d-%2d-%2d",
+                        today.get(Calendar.YEAR),
+                        today.get(Calendar.MONTH) + 1,
+                        today.get(Calendar.DAY_OF_MONTH))
+                );
+                Log.d("real time init time : ",today_now_text.getText().toString());
+            }
+        });
         if(real_time_reset_button == null) real_time_reset_button = (Button)findViewById(R.id.real_time_reset_button);
         if(real_time_stop_button == null) real_time_stop_button = (Button)findViewById(R.id.real_time_stop_button);
         if(real_time_start_button == null) real_time_start_button = (Button)findViewById(R.id.real_time_start_button);
@@ -201,6 +215,7 @@ public class FlowingDrawerActivity extends AppCompatActivity
     }
     public void onRealTimeReset(View view){
         real_time_map.clear();
+        mAmapTraceThread.reset_path_track();
         real_time_reset_button.setTextColor(ContextCompat.getColor(getBaseContext(),R.color.white));
         real_time_reset_button.setBackground(ContextCompat.getDrawable(getBaseContext(),R.color.lightskyblue));
         handler.postDelayed(new Runnable() {
